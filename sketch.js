@@ -16,6 +16,10 @@ var message1,message1_img;
 
 var life = 10;
 
+var hoverboard,hoverboard_img;
+
+var standingboy;
+
 //to load the images
 function preload(){
   bg = loadImage("images/bggarden01.jpg");
@@ -23,6 +27,8 @@ function preload(){
   virus_img = loadImage("images/virus.png");
   obstacles_img = loadAnimation("images/rw1.png","images/rw2.png","images/rw3.png","images/rw4.png","images/rw5.png","images/rw6.png","images/rw7.png","images/rw8.png","images/rw9.png");
   message1_img = loadImage("images/SocialDistancingred.png");
+  hoverboard_img = loadImage("images/hover board1.png");
+  standingboy = loadImage("images/boy10.png");
 }
 
 function setup() {
@@ -31,10 +37,11 @@ function setup() {
   engine = Engine.create()
   world = engine.world;
   player = createSprite(100,300,50,50);
-  player.addAnimation("player",boy_img)
+  player.addAnimation("player",boy_img);
+  player.addImage("stand",standingboy)
   player.scale=0.4;
   player.debug = true;
-  player.setCollider("circle",0,0,20,20)
+  player.setCollider("rectangle",0,0,10,450);
 
   ground = createSprite(600,390,1200,20);
   ground.visible = false;
@@ -54,11 +61,24 @@ function setup() {
   message1.addImage("m1",message1_img);
   message1.scale = 0.4;
   message1.visible = false;
+
+  hoverboard = createSprite(200,340,50,50);
+  hoverboard.addImage("hoverboard",hoverboard_img);
+  hoverboard.scale=0.3;
+  hoverboard.visible = false;
+  hoverboard.debug = true;
+  hoverboard.setCollider("circle",0,0,16)
 }
 
 function draw() {
   background(bg); 
   Engine.update(engine) 
+
+  if(keyCode===68){
+    hoverboard.visible = true;
+    player.collide(hoverboard);
+    player.changeImage("stand",standingboy);
+  }
 
   if(keyDown("space")){
     player.velocityY=-8;
@@ -72,6 +92,7 @@ function draw() {
   else{
     player.velocityX=0;
   }
+
   
   if(keyCode === 32 && player.y>320){
     player.velocityY = -3;
@@ -82,6 +103,20 @@ function draw() {
    if(obstacles.x<0){
      obstacles.x = 1200;
    }
+
+//collision detection betweeen boy and hover board
+if(player.y-hoverboard.y<player.height/2+hoverboard.height/2
+  && hoverboard.y-player.y<hoverboard.height/2+player.height/2
+  && player.x-hoverboard.x<player.width/2+hoverboard.width/2
+  && hoverboard.x-player.x<hoverboard.width/2+player.width/2){
+    
+    
+   // player.x=hoverboard.x
+    //player.y=hoverboard.y
+    
+  }
+
+
 
 //collision detection betweeen boy and obstacles
 if(player.x-obstacles.x === player.width/2+obstacles.width/2){
@@ -111,13 +146,7 @@ var followerAngle = Math.atan(deltaY/deltaX);
  follower.velocityX = velocity*sin(followerAngle)
 }
 
-//function spawnObstacles(){
-  //if(World.frameCount % 50 === 0){
 
-  
-  //}
-
-//}
 
 
 
